@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Movies Problem</title>
+	<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+
+</head>
+<body>
+	<div id="output"></div> <!-- $('#output').html(res); use this in the script to post results to id"output"-->
+
+
+	<script>
+
+		//splits the checkouts data into arrays inside of an array[0]user[1]month[2]movies
+		function separate(string){ 
+			var arr = string.split("\n");
+			arr.pop();
+			for(var i = 0; i < arr.length; i++){
+				arr[i] = arr[i].split(" ");
+			}
+			return arr;
+			// console.log(arr);
+		}
+
+		function countMonth(arr){// counts all the months and returns them in object
+			var count = [];
+			for(var i = 0; i < arr.length; i++){
+				if(count[arr[i][1]] === undefined){
+					count[arr[i][1]] = 0;
+				}
+				count[arr[i][1]] = count[arr[i][1]] + 1;
+			}
+			return count;
+		}
+
+		function countUser(arr){ // counts all the users and returns them in object
+			var count = [];
+			for(var i = 0; i < arr.length; i++){
+				if(count[arr[i][0]] === undefined){
+					count[arr[i][0]] = 0;
+				}
+				count[arr[i][0]] = count[arr[i][0]] + 1;
+			}
+			return count;
+		}
+
+		function countMov(arr){ // counts all the users and returns them in object
+			var count = [];
+			for(var i = 0; i < arr.length; i++){
+				if(count[arr[i][2]] === undefined){
+					count[arr[i][2]] = 0;
+				}
+				count[arr[i][2]] = count[arr[i][2]] + 1;
+			}
+			return count;
+		}
+
+
+		function findWinner(arr){ // determines the highest counted in the objects.
+			var counts = 0;
+			var winner = 0;
+			for (var key in arr){
+				if(counts === 0){
+					counts = arr[key];
+					winner = key;
+				} else if (counts < arr[key]){
+					counts = arr[key];
+					winner = key;
+				} else if (counts === arr[key]){
+					winner = winner + " " + key;
+				}
+			}
+			return winner;
+		}
+
+		//allows me to take the string respose and manipulate it in functions
+		function analyze(res) {  
+			var arrays = separate(res);
+			var winningMonth = findWinner(countMonth(arrays));
+			var winningUser = findWinner(countUser(arrays));
+			var winningMovNum = findWinner(countMov(arrays));
+			console.log(winningMonth);
+			console.log(winningUser);
+			function analize(response){
+				var separated = separate(response);
+				movArr = winningMovNum.split(" ");
+				var winningMov = "";
+				for(var k = 0; k < movArr.length; k++){
+					for(var i = 0; i < separated.length; i++){
+						if (movArr[k] === separated[i][0]){
+							for(var j = 1; j < separated[i].length; j++){
+								winningMov = winningMov +" "+ separated[i][j];
+							}
+						}
+					}	
+				}
+				console.log(winningMov);	
+			}
+
+
+			$.get("http://159.203.175.239:8080/movies.txt", analize);
+
+		}
+
+		$.get("http://159.203.175.239:8080/checkouts.txt", analyze);
+
+	</script>
+</body>
+</html>
